@@ -1,0 +1,10 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.zoom_meeting
+id: node.zoom_meeting
+target_entity_type_id: node
+target_bundle: zoom_meeting
+default_langcode: site_default
+language_alterable: false
