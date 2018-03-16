@@ -5,11 +5,11 @@ core: 8.x
 version: 8.x-1.0
 package: Zoom
 dependencies:
-  - jwt
-  - key
+  # Core
   - address
   - datetime
   - field
+  - key
   - node
   - options
   - path
@@ -17,3 +17,5 @@ dependencies:
   - text
   - user
   - views
+  #contrib
+  - jwt

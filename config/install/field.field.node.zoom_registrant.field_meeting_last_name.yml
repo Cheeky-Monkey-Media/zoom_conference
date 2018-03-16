@@ -4,19 +4,6 @@ dependencies:
   config:
     - field.storage.node.field_meeting_last_name
     - node.type.zoom_registrant
-  module:
-    - geocoder_field
-third_party_settings:
-  geocoder_field:
-    method: none
-    field: title
-    plugins: {  }
-    dumper: wkt
-    delta_handling: default
-    failure:
-      handling: preserve
-      status_message: true
-      log: true
 id: node.zoom_registrant.field_meeting_last_name
 field_name: field_meeting_last_name
 entity_type: node

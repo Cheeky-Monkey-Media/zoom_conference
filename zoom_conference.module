@@ -85,7 +85,7 @@ function zoom_conference_form_node_zoom_meeting_form_alter(&$form, \Drupal\Core\
 
       // Try to get a default for the select widget.
       if ($val == $user_email) {
-        $default_user = $key; 
+        $default_user = $key;
       }
     }
   }
@@ -146,7 +146,7 @@ function zoom_conference_form_node_zoom_registrant_form_alter(&$form, \Drupal\Co
     $current_date = new DateTime();
 
     if ($start_date < $current_date) {
-      drupal_set_message(t('The meeting has already passed.'), 'status'); 
+      drupal_set_message(t('The meeting has already passed.'), 'status');
       throw new NotFoundHttpException();
     }
 
@@ -155,7 +155,7 @@ function zoom_conference_form_node_zoom_registrant_form_alter(&$form, \Drupal\Co
     $type = array_pop($type);
     $type = $type['value'];
     if ($type == 1) {
-      drupal_set_message(t('You cannot register for instant meetings.'), 'status'); 
+      drupal_set_message(t('You cannot register for instant meetings.'), 'status');
       throw new NotFoundHttpException();
     }
   }
@@ -216,7 +216,7 @@ function zoom_conference_form_node_zoom_registrant_form_alter(&$form, \Drupal\Co
  * Block editing of Zoom Registrants (they can only be added or deleted).
  */
 function zoom_conference_form_node_zoom_registrant_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
-  drupal_set_message(t('You cannot alter a Zoom Registration once it has been created. To cancel it, delete instead.'), 'status'); 
+  drupal_set_message(t('You cannot alter a Zoom Registration once it has been created. To cancel it, delete instead.'), 'status');
 }
 
 /**
@@ -258,8 +258,8 @@ function zoom_conference_node_presave(Drupal\Core\Entity\EntityInterface $entity
       // Timezone.
       $timezone = $entity->get('field_meeting_timezone')->getValue();
       $timezone = array_pop($timezone);
-      $timezone = $timezone['value'];
-      
+      $timezone = $timezone['value']; dpm($timezone);
+
       // Duration.
       $duration = $entity->get('field_meeting_duration')->getValue();
       $duration = array_pop($duration);
@@ -303,10 +303,10 @@ function zoom_conference_node_presave(Drupal\Core\Entity\EntityInterface $entity
         $entity->set('field_meeting_join_url', $data['join_url']);
 
         // Let the user know everything worked properly.
-        drupal_set_message(t('Your meeting has been created at Zoom.'), 'status'); 
+        drupal_set_message(t('Your meeting has been created at Zoom.'), 'status');
       }
       else {
-        drupal_set_message(t('An error occurred while adding the meeting to Zoom.'), 'warning'); 
+        drupal_set_message(t('An error occurred while adding the meeting to Zoom.'), 'warning');
       }
     }
     //=============
@@ -329,18 +329,19 @@ function zoom_conference_node_presave(Drupal\Core\Entity\EntityInterface $entity
       // Start Date.
       $start_time = $entity->get('field_meeting_start_date')->getValue();
       $start_time = array_pop($start_time);
-      $start_time = $start_time['value'];
+      $start_time = $start_time['value'] . 'Z';
+      dpm($start_time);
 
       // Timezone.
       $timezone = $entity->get('field_meeting_timezone')->getValue();
       $timezone = array_pop($timezone);
-      $timezone = $timezone['value'];
-      
+      $timezone = $timezone['value']; dpm($timezone);
+
       // Duration.
       $duration = $entity->get('field_meeting_duration')->getValue();
       $duration = array_pop($duration);
       $duration = $duration['value'];
-      
+
       // Agenda.
       $agenda = $entity->get('body')->getValue();
       if (!empty($agenda)) {
@@ -489,17 +490,23 @@ function zoom_conference_node_presave(Drupal\Core\Entity\EntityInterface $entity
       $data = $meeting_api->add_registrant($zoom_meeting_id, $email, $first_name, $last_name, $options);
 
       // Update the object with the returned values.
+      // @todo: Check response message for better handling.
+      // i.e. {"code":200,"message":"Only available for Paid user: ..."}
       if (!empty($data)) {
         // Update the meeting with Zoom data before saving.
         $entity->set('field_zoom_data', json_encode($data));
-        $entity->set('field_registrant_id', $data['registrant_id']);
-        $entity->set('field_join_url', $data['join_url']);
+        if (!empty($data['registrant_id'])) {
+          $entity->set('field_registrant_id', $data['registrant_id']);
+        }
+        if (!empty($data['registrant_id'])) {
+          $entity->set('field_join_url', $data['join_url']);
+        }
 
         // Let the user know everything worked properly.
-        drupal_set_message(t('Your registration has been created at Zoom.'), 'status'); 
+        drupal_set_message(t('Your registration has been created at Zoom.'), 'status');
       }
       else {
-        drupal_set_message(t('An error occurred while creating the registration.'), 'warning'); 
+        drupal_set_message(t('An error occurred while creating the registration.'), 'warning');
       }
 
       // TODO: send an email to the user?
@@ -532,10 +539,10 @@ function zoom_conference_node_predelete(Drupal\Core\Entity\EntityInterface $enti
     // Get meeting ID.
     $meeting_id = $entity->get('field_meeting_id')->getValue();
     $meeting_id = array_pop($meeting_id);
-    $meeting_id = $meeting_id['value']; 
+    $meeting_id = $meeting_id['value'];
 
     $meeting_api = new ZoomAPIMeeting;
-    $meeting_api->delete($meeting_id, $options);
+    $meeting_api->delete($meeting_id);
 
     // Let the user know everything worked properly.
     drupal_set_message(t('Your meeting has been canceled.'), 'status');

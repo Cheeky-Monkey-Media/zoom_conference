@@ -57,7 +57,7 @@ class ZoomAPIMeeting extends ZoomAPI {
 
     /*
      * Timezone to format start_time, like “America/Los_Angeles”. For scheduled meeting
-     * only. For this parameter value please refer to the id value in 
+     * only. For this parameter value please refer to the id value in
      * https://zoom.github.io/api/#timezones list.
      */
     if (isset($options['timezone'])) {
@@ -284,8 +284,6 @@ class ZoomAPIMeeting extends ZoomAPI {
    *
    * @param string $meeting_id
    *   The zoom provided meeting ID.
-   * @param string $host_zoom_user_id
-   *   The zoom user ID of the meeting host.
    * @param string $occurrence_id
    *   Optional meeting occurrence ID for use with recurring meetings.
    *
@@ -356,10 +354,6 @@ class ZoomAPIMeeting extends ZoomAPI {
    *   An array containing the transaction details.
    */
   public function update($meeting_id, $options = array()) {
-        $data = [
-      'type' => $type,
-    ];
-
     /*
      * Meeting topic.
      */
@@ -396,7 +390,7 @@ class ZoomAPIMeeting extends ZoomAPI {
 
     /*
      * Timezone to format start_time, like “America/Los_Angeles”. For scheduled meeting
-     * only. For this parameter value please refer to the id value in 
+     * only. For this parameter value please refer to the id value in
      * https://zoom.github.io/api/#timezones list.
      */
     if (isset($options['timezone'])) {
@@ -756,11 +750,11 @@ class ZoomAPIMeeting extends ZoomAPI {
 
     /*
      * Purchasing Time Frame.
-     * Within a month 
-     * 1-3 months 
-     * 4-6 months 
-     * More than 6 months 
-     * No timeframe 
+     * Within a month
+     * 1-3 months
+     * 4-6 months
+     * More than 6 months
+     * No timeframe
      */
     if (isset($options['purchasing_time_frame'])) {
       $data['purchasing_time_frame'] = $options['purchasing_time_frame'];
@@ -768,9 +762,9 @@ class ZoomAPIMeeting extends ZoomAPI {
 
     /*
      * Role in Purchase Process.
-     * Decision Maker 
-     * Evaluator/Recommender 
-     * Influencer 
+     * Decision Maker
+     * Evaluator/Recommender
+     * Influencer
      * Not involved
      */
     if (isset($options['role_in_purchase_process'])) {
@@ -779,13 +773,13 @@ class ZoomAPIMeeting extends ZoomAPI {
 
     /*
      * Number of Employees
-     * 1-20 
-     * 21-50 
-     * 51-100 
-     * 101-500 
-     * 500-1,000 
-     * 1,001-5,000 
-     * 5,001-10,000 
+     * 1-20
+     * 21-50
+     * 51-100
+     * 101-500
+     * 500-1,000
+     * 1,001-5,000
+     * 5,001-10,000
      * More than 10,000
      */
     if (isset($options['no_of_employees'])) {
@@ -840,7 +834,7 @@ class ZoomAPIMeeting extends ZoomAPI {
 
     return $this->sendRequest('meetings/' . $meeting_id . '/registrants/status', 'PUT', $data);
   }
-  
+
   /**
    * Get a list of users on the current account.
    *

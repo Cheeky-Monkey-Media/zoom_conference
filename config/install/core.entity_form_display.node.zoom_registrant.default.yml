@@ -25,7 +25,6 @@ dependencies:
     - address
     - path
     - telephone
-    - workbench_moderation
 id: node.zoom_registrant.default
 targetEntityType: node
 bundle: zoom_registrant

@@ -5,19 +5,7 @@ dependencies:
     - field.storage.node.field_meeting_start_url
     - node.type.zoom_meeting
   module:
-    - geocoder_field
     - text
-third_party_settings:
-  geocoder_field:
-    method: none
-    field: title
-    plugins: {  }
-    dumper: wkt
-    delta_handling: default
-    failure:
-      handling: preserve
-      status_message: true
-      log: true
 id: node.zoom_meeting.field_meeting_start_url
 field_name: field_meeting_start_url
 entity_type: node
