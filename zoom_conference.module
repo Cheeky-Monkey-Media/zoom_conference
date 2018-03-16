@@ -7,10 +7,10 @@ module_load_include('php', 'zoom_conference', 'src/ZoomApi');
 module_load_include('php', 'zoom_conference', 'src/ZoomMeetingApi');
 module_load_include('php', 'zoom_conference', 'src/ZoomRecordingApi');
 
+use Drupal\user\Entity\User;
 use Drupal\zoom_conference\Api\ZoomAPI;
 use Drupal\zoom_conference\Api\ZoomAPIMeeting;
 use Drupal\zoom_conference\Api\ZoomAPIRecording;
-
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -105,10 +105,10 @@ function zoom_conference_form_node_zoom_meeting_form_alter(&$form, \Drupal\Core\
   // Set up and hide the meeting type.
   // TODO: add support for recurring meetings
   $meeting_types = [
-    1 =>  t('Instant Meeting'),
-    2 => t('Scheduled Meeting'),
-    //3 => t('Recurring Meeting with no fixed time'),
-    //8 => t('Recurring Meeting with fixed time'),
+    ZOOMAPI_MEETING_TYPE_INSTANT =>  t('Instant Meeting'),
+    ZOOMAPI_MEETING_TYPE_NORMAL => t('Scheduled Meeting'),
+    //ZOOMAPI_MEETING_TYPE_RECURRING_NO_FIXED_TIME => t('Recurring Meeting with no fixed time'),
+    //ZOOMAPI_MEETING_TYPE_RECURRING_FIXED_TIME => t('Recurring Meeting with fixed time'),
   ];
   $form['field_meeting_type']['widget'][0]['value']['#options'] = $meeting_types;
   $form['field_meeting_type']['widget'][0]['value']['#type'] = 'select';
@@ -154,7 +154,7 @@ function zoom_conference_form_node_zoom_registrant_form_alter(&$form, \Drupal\Co
     $type = $meeting->get('field_meeting_type')->getValue();
     $type = array_pop($type);
     $type = $type['value'];
-    if ($type == 1) {
+    if ($type == ZOOMAPI_MEETING_TYPE_INSTANT) {
       drupal_set_message(t('You cannot register for instant meetings.'), 'status');
       throw new NotFoundHttpException();
     }
@@ -182,7 +182,7 @@ function zoom_conference_form_node_zoom_registrant_form_alter(&$form, \Drupal\Co
   }
   else {
     $uid = $current_user->id();
-    $user = \Drupal\user\Entity\User::load($uid);
+    $user = User::load($uid);
 
     // Default and hide the user field.
     $form['field_meeting_user']['widget'][0]['target_id']['#default_value'] = $user;
@@ -193,7 +193,6 @@ function zoom_conference_form_node_zoom_registrant_form_alter(&$form, \Drupal\Co
     $mail = array_pop($mail);
     $mail = $mail['value'];
     $form['field_zoom_email']['widget'][0]['value']['#default_value'] = $mail;
-    //$form['field_zoom_email']['widget'][0]['#disabled'] = TRUE;
   }
 
   // Hide / set title based on the meeting name
@@ -221,6 +220,7 @@ function zoom_conference_form_node_zoom_registrant_edit_form_alter(&$form, \Drup
 
 /**
  * Implements hook_ENTITY_TYPE_presave().
+ *
  * Handle calls to Zoom API.
  */
 function zoom_conference_node_presave(Drupal\Core\Entity\EntityInterface $entity) {
@@ -258,7 +258,7 @@ function zoom_conference_node_presave(Drupal\Core\Entity\EntityInterface $entity
       // Timezone.
       $timezone = $entity->get('field_meeting_timezone')->getValue();
       $timezone = array_pop($timezone);
-      $timezone = $timezone['value']; dpm($timezone);
+      $timezone = $timezone['value'];
 
       // Duration.
       $duration = $entity->get('field_meeting_duration')->getValue();
@@ -330,12 +330,11 @@ function zoom_conference_node_presave(Drupal\Core\Entity\EntityInterface $entity
       $start_time = $entity->get('field_meeting_start_date')->getValue();
       $start_time = array_pop($start_time);
       $start_time = $start_time['value'] . 'Z';
-      dpm($start_time);
 
       // Timezone.
       $timezone = $entity->get('field_meeting_timezone')->getValue();
       $timezone = array_pop($timezone);
-      $timezone = $timezone['value']; dpm($timezone);
+      $timezone = $timezone['value'];
 
       // Duration.
       $duration = $entity->get('field_meeting_duration')->getValue();
@@ -518,13 +517,13 @@ function zoom_conference_node_presave(Drupal\Core\Entity\EntityInterface $entity
       // "Block" edits of registrations.
       drupal_set_message(t('You cannot edit a registration at Zoom after it has been created. To remove your registration, delete the record.'), 'status');
     }
-
   }
 
 }
 
 /**
  * Implements hook_ENTITY_TYPE_predelete().
+ *
  * Handle deletion of Zoom Meetings and Registrants.
  */
 function zoom_conference_node_predelete(Drupal\Core\Entity\EntityInterface $entity) {

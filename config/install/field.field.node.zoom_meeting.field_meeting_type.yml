@@ -9,7 +9,7 @@ field_name: field_meeting_type
 entity_type: node
 bundle: zoom_meeting
 label: 'Meeting Type'
-description: 'The Zoom meeting type. (1 instant, 2 normal scheduled, 3 recurring no fixed time, 8 recurring fixed time.'
+description: 'The Zoom meeting type. (1 instant, 2 normal scheduled, 3 recurring no fixed time, 8 recurring fixed time.)'
 required: false
 translatable: false
 default_value: {  }
