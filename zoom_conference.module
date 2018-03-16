@@ -258,7 +258,7 @@ function zoom_conference_node_presave(Drupal\Core\Entity\EntityInterface $entity
       // Timezone.
       $timezone = $entity->get('field_meeting_timezone')->getValue();
       $timezone = array_pop($timezone);
-      $timezone = $timezone['value']; dpm($timezone);
+      $timezone = $timezone['value'];
 
       // Duration.
       $duration = $entity->get('field_meeting_duration')->getValue();
@@ -330,12 +330,11 @@ function zoom_conference_node_presave(Drupal\Core\Entity\EntityInterface $entity
       $start_time = $entity->get('field_meeting_start_date')->getValue();
       $start_time = array_pop($start_time);
       $start_time = $start_time['value'] . 'Z';
-      dpm($start_time);
 
       // Timezone.
       $timezone = $entity->get('field_meeting_timezone')->getValue();
       $timezone = array_pop($timezone);
-      $timezone = $timezone['value']; dpm($timezone);
+      $timezone = $timezone['value'];
 
       // Duration.
       $duration = $entity->get('field_meeting_duration')->getValue();
