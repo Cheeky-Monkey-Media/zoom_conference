@@ -45,7 +45,6 @@ function zoom_conference_theme() {
  * Implements hook_form_FORM_ID_alter().
  */
 function zoom_conference_form_node_zoom_meeting_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
-
   // Get current user.
   $user = \Drupal::currentUser();
   $user_email = $user->getEmail();
@@ -110,9 +109,17 @@ function zoom_conference_form_node_zoom_meeting_form_alter(&$form, \Drupal\Core\
     //ZOOMAPI_MEETING_TYPE_RECURRING_NO_FIXED_TIME => t('Recurring Meeting with no fixed time'),
     //ZOOMAPI_MEETING_TYPE_RECURRING_FIXED_TIME => t('Recurring Meeting with fixed time'),
   ];
-  $form['field_meeting_type']['widget'][0]['value']['#options'] = $meeting_types;
+  $form['field_meeting_type']['widget'][0]['value']['#options'] = zoom_conference_meeting_type_options();
   $form['field_meeting_type']['widget'][0]['value']['#type'] = 'select';
-  $form['field_meeting_type']['widget'][0]['value']['#default_value'] = 2;
+  $form['field_meeting_type']['widget'][0]['value']['#default_value'] = ZOOMAPI_USER_TYPE_DEFAULT;
+}
+
+/**
+ * Implements hook_form_FORM_ID_alter().
+ */
+function zoom_conference_form_node_zoom_meeting_edit_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+  $form['field_meeting_type']['widget'][0]['value']['#options'] = zoom_conference_meeting_type_options();
+  $form['field_meeting_type']['widget'][0]['value']['#type'] = 'select';
 }
 
 /**
@@ -584,5 +591,22 @@ function zoom_conference_node_predelete(Drupal\Core\Entity\EntityInterface $enti
     // Let the user know everything worked properly.
     drupal_set_message(t('Your registration has been canceled.'), 'status');
   }
+}
 
+/**
+ * Return a list of select field options for meeting types.
+ *
+ * @return array
+ *   Form field options for meeting types.
+ */
+function zoom_conference_meeting_type_options() {
+  // TODO: add support for recurring meetings
+  $meeting_types = [
+    ZOOMAPI_MEETING_TYPE_INSTANT =>  t('Instant Meeting'),
+    ZOOMAPI_MEETING_TYPE_NORMAL => t('Scheduled Meeting'),
+    //ZOOMAPI_MEETING_TYPE_RECURRING_NO_FIXED_TIME => t('Recurring Meeting with no fixed time'),
+    //ZOOMAPI_MEETING_TYPE_RECURRING_FIXED_TIME => t('Recurring Meeting with fixed time'),
+  ];
+
+  return $meeting_types;
 }
